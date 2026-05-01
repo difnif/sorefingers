@@ -1,0 +1,309 @@
+/* ==========================================================================
+   Ink theme — 종이 바탕에 잉크
+   ========================================================================== */
+
+:root {
+  /* paper / ink */
+  --paper: #F4F1EA;
+  --paper-warm: #FAF7F0;
+  --ink: #1C1A17;
+  --ink-mid: #5A554C;
+  --ink-soft: #BDB6A8;
+  --ink-line: rgba(28, 26, 23, 0.12);
+
+  /* accent — red ink */
+  --vermilion: #A03C2E;
+  --vermilion-soft: rgba(160, 60, 46, 0.06);
+
+  /* type */
+  --serif: "Noto Serif KR", "Noto Serif CJK KR", serif;
+  --sans: "Noto Sans KR", "Noto Sans CJK KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "DejaVu Sans Mono", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+button {
+  font-family: var(--sans);
+  cursor: pointer;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 8px 16px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition: background 0.15s ease;
+}
+button:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+input {
+  font-family: var(--sans);
+  font-size: 14px;
+  background: var(--paper-warm);
+  border: 1px solid var(--ink-line);
+  color: var(--ink);
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+input:focus {
+  border-color: var(--ink);
+}
+
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 0.5px;
+}
+
+/* ==========================================================================
+   Auth screen
+   ========================================================================== */
+.auth-screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+}
+.auth-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 56px;
+  letter-spacing: -0.04em;
+  margin: 0 0 8px;
+}
+.auth-tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-mid);
+  font-size: 15px;
+  margin: 0 0 48px;
+  max-width: 360px;
+  text-align: center;
+  line-height: 1.6;
+}
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 320px;
+  max-width: 100%;
+}
+.auth-form input { width: 100%; }
+.auth-form .auth-divider {
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.15em;
+  margin: 4px 0;
+}
+.auth-error {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--vermilion);
+  margin-top: 4px;
+  min-height: 1.4em;
+}
+.auth-toggle {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-mid);
+  margin-top: 16px;
+  text-align: center;
+}
+.auth-toggle button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.auth-toggle button:hover {
+  background: transparent;
+  color: var(--vermilion);
+}
+
+/* ==========================================================================
+   Project list
+   ========================================================================== */
+.project-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 24px 24px;
+  overflow-y: auto;
+}
+.project-list-header {
+  width: 480px;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 32px;
+}
+.project-list-header h2 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 22px;
+  margin: 0;
+}
+.project-list-header .user-info {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink-mid);
+}
+.project-list-header .user-info button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-left: 8px;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.project-list-header .user-info button:hover {
+  background: transparent;
+  color: var(--vermilion);
+}
+.project-list-items {
+  width: 480px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.project-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--paper-warm);
+  border: 0.5px solid var(--ink-line);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.project-row:hover {
+  border-color: var(--ink);
+}
+.project-row .project-name {
+  font-family: var(--serif);
+  font-size: 16px;
+}
+.project-row .project-meta {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+}
+.project-empty {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-mid);
+  text-align: center;
+  padding: 32px 0;
+}
+.project-create {
+  width: 480px;
+  max-width: 100%;
+  display: flex;
+  gap: 8px;
+}
+.project-create input { flex: 1; }
+
+/* ==========================================================================
+   Workspace
+   ========================================================================== */
+.workspace {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+.workspace-canvas {
+  position: absolute;
+  inset: 0;
+}
+.workspace-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+.workspace-overlay .project-title {
+  color: var(--ink-mid);
+  font-size: 13px;
+  margin-bottom: 2px;
+  font-family: var(--serif);
+  font-weight: 700;
+}
+.workspace-back {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink-mid);
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.workspace-back:hover {
+  background: transparent;
+  color: var(--vermilion);
+}
+.workspace-status {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Loading / shared
+   ========================================================================== */
+.center-fill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-mid);
+}
