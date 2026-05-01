@@ -1,8 +1,13 @@
 // ==========================================================================
-// ProjectList — 프로젝트 선택 / 생성
+// ProjectList — 프로젝트 선택 / 생성 / 이름 수정 / 삭제
 // ==========================================================================
-import { useEffect, useState } from 'react';
-import { listProjects, createProject } from '../lib/firestore.js';
+import { useEffect, useState, useRef } from 'react';
+import {
+  listProjects,
+  createProject,
+  renameProject,
+  deleteProject
+} from '../lib/firestore.js';
 import { signOut } from '../lib/auth.js';
 import { useStore } from '../store/useStore.js';
 
@@ -13,6 +18,13 @@ export default function ProjectList() {
   const [loading, setLoading] = useState(true);
   const [newName, setNewName] = useState('');
   const [busy, setBusy] = useState(false);
+
+  // 인라인 이름 수정 상태
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState('');
+
+  // 메뉴 열린 프로젝트
+  const [menuOpenId, setMenuOpenId] = useState(null);
 
   async function refresh() {
     setLoading(true);
@@ -30,6 +42,14 @@ export default function ProjectList() {
     refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.uid]);
+
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    if (!menuOpenId) return;
+    function onClick() { setMenuOpenId(null); }
+    window.addEventListener('click', onClick);
+    return () => window.removeEventListener('click', onClick);
+  }, [menuOpenId]);
 
   async function handleCreate(e) {
     e.preventDefault();
@@ -49,8 +69,55 @@ export default function ProjectList() {
     }
   }
 
+  function startEdit(project, e) {
+    e.stopPropagation();
+    setEditingId(project.id);
+    setEditingName(project.name);
+    setMenuOpenId(null);
+  }
+
+  async function commitEdit(projectId) {
+    const trimmed = editingName.trim();
+    if (!trimmed) {
+      setEditingId(null);
+      return;
+    }
+    try {
+      await renameProject(projectId, trimmed);
+      setProjects(ps => ps.map(p => p.id === projectId ? { ...p, name: trimmed } : p));
+    } catch (err) {
+      console.error('[projects] 이름 수정 실패:', err);
+    } finally {
+      setEditingId(null);
+    }
+  }
+
+  async function handleDelete(project, e) {
+    e.stopPropagation();
+    setMenuOpenId(null);
+    const confirmed = window.confirm(
+      `"${project.name}" 프로젝트를 정말 삭제하시겠습니까?\n\n` +
+      `이 안의 모든 노드와 연결이 함께 삭제되며, 되돌릴 수 없습니다.`
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteProject(project.id);
+      setProjects(ps => ps.filter(p => p.id !== project.id));
+    } catch (err) {
+      console.error('[projects] 삭제 실패:', err);
+      alert('삭제 중 오류가 발생했습니다. 콘솔을 확인하세요.');
+    }
+  }
+
   function open(project) {
+    if (editingId === project.id) return;
     setActiveProject(project);
+  }
+
+  function toggleMenu(projectId, e) {
+    e.stopPropagation();
+    setMenuOpenId(menuOpenId === projectId ? null : projectId);
   }
 
   return (
@@ -72,8 +139,43 @@ export default function ProjectList() {
         )}
         {!loading && projects.map(p => (
           <div key={p.id} className="project-row" onClick={() => open(p)}>
-            <span className="project-name">{p.name}</span>
-            <span className="project-meta">{formatDate(p.updatedAt)}</span>
+            {editingId === p.id ? (
+              <input
+                className="project-name-edit"
+                type="text"
+                value={editingName}
+                onChange={e => setEditingName(e.target.value)}
+                onBlur={() => commitEdit(p.id)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') commitEdit(p.id);
+                  if (e.key === 'Escape') setEditingId(null);
+                }}
+                onClick={e => e.stopPropagation()}
+                autoFocus
+                maxLength={60}
+              />
+            ) : (
+              <span className="project-name">{p.name}</span>
+            )}
+
+            <span className="project-row-right">
+              <span className="project-meta">{formatDate(p.updatedAt)}</span>
+              <button
+                className="project-menu-trigger"
+                onClick={e => toggleMenu(p.id, e)}
+                title="메뉴"
+              >⋯</button>
+
+              {menuOpenId === p.id && (
+                <span className="project-menu" onClick={e => e.stopPropagation()}>
+                  <button onClick={e => startEdit(p, e)}>이름 수정</button>
+                  <button
+                    onClick={e => handleDelete(p, e)}
+                    className="menu-danger"
+                  >삭제</button>
+                </span>
+              )}
+            </span>
           </div>
         ))}
       </div>

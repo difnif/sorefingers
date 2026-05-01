@@ -1,11 +1,9 @@
 // ==========================================================================
 // Firestore Security Rules — sorefingers
 //
-// 테스트 모드가 30일 뒤 만료되면 모든 요청이 차단되므로, 정식 규칙으로 교체.
 // 핵심 원칙: 자기 프로젝트는 자기만 읽고 쓸 수 있다.
 //
 // 배포: Firebase Console → Firestore → Rules 탭에 그대로 붙여넣기 후 Publish
-// 또는: firebase deploy --only firestore:rules
 // ==========================================================================
 
 rules_version = '2';
@@ -23,7 +21,6 @@ service cloud.firestore {
       allow delete: if isOwner();
 
       // 하위 컬렉션 — 부모 프로젝트의 소유자만 접근
-      // (Part 1: nodes만 사용. 나머지는 후속 Part에서 활성)
       match /nodes/{nodeId} {
         allow read, write: if isProjectOwner(projectId);
       }

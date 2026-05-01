@@ -1,19 +1,20 @@
 // ==========================================================================
 // Canvas3D — R3F 캔버스
-// - 카메라: (0, 0, 50) at lookAt (0, 0, 0)
-// - 회전 잠금 (Part 1-4), 팬 + 줌만 허용
-// - Rapier 물리계 초기화 (gravity = 0)
-// - 노드를 잉크 점으로 렌더링
+// 노드 + 엣지를 그리고, 카메라 제스처와 물리계를 마운트한다.
 // ==========================================================================
 import { Canvas } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
 import { useStore } from '../store/useStore.js';
 import CameraController from './CameraController.jsx';
 import PhysicsWorld from './PhysicsWorld.jsx';
 import InkNode from './InkNode.jsx';
+import InkEdge from './InkEdge.jsx';
 
 export default function Canvas3D({ onPhysicsReady }) {
   const nodes = useStore(s => s.nodes);
+  const edges = useStore(s => s.edges);
+
+  // 빠른 조회용 인덱스
+  const nodeIndex = new Map(nodes.map(n => [n.id, n]));
 
   return (
     <Canvas
@@ -24,16 +25,23 @@ export default function Canvas3D({ onPhysicsReady }) {
         near: 0.1,
         far: 1000
       }}
-      gl={{ antialias: true, alpha: false }}
+      dpr={[1, 2]}
+      gl={{ antialias: true, alpha: false, powerPreference: 'default' }}
       style={{ background: '#F4F1EA' }}
     >
-      {/* 종이 질감의 약한 조명 */}
       <ambientLight intensity={0.9} />
 
       <CameraController />
       <PhysicsWorld onReady={onPhysicsReady} />
 
-      {/* 노드 렌더링 */}
+      {/* 엣지가 노드보다 먼저 — 점이 선 위에 오도록 */}
+      {edges.map(edge => {
+        const source = nodeIndex.get(edge.source);
+        const target = nodeIndex.get(edge.target);
+        if (!source || !target) return null;
+        return <InkEdge key={edge.id} edge={edge} source={source} target={target} />;
+      })}
+
       {nodes.map(node => (
         <InkNode key={node.id} node={node} />
       ))}

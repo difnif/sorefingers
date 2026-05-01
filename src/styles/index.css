@@ -3,7 +3,6 @@
    ========================================================================== */
 
 :root {
-  /* paper / ink */
   --paper: #F4F1EA;
   --paper-warm: #FAF7F0;
   --ink: #1C1A17;
@@ -11,11 +10,9 @@
   --ink-soft: #BDB6A8;
   --ink-line: rgba(28, 26, 23, 0.12);
 
-  /* accent — red ink */
   --vermilion: #A03C2E;
   --vermilion-soft: rgba(160, 60, 46, 0.06);
 
-  /* type */
   --serif: "Noto Serif KR", "Noto Serif CJK KR", serif;
   --sans: "Noto Sans KR", "Noto Sans CJK KR", -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: "JetBrains Mono", "DejaVu Sans Mono", Consolas, monospace;
@@ -48,14 +45,8 @@ button {
   letter-spacing: 0.02em;
   transition: background 0.15s ease;
 }
-button:hover {
-  background: var(--ink);
-  color: var(--paper);
-}
-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+button:hover { background: var(--ink); color: var(--paper); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 input {
   font-family: var(--sans);
@@ -67,9 +58,7 @@ input {
   outline: none;
   transition: border-color 0.15s ease;
 }
-input:focus {
-  border-color: var(--ink);
-}
+input:focus { border-color: var(--ink); }
 
 a {
   color: var(--ink);
@@ -79,7 +68,7 @@ a {
 }
 
 /* ==========================================================================
-   Auth screen
+   Auth
    ========================================================================== */
 .auth-screen {
   height: 100%;
@@ -114,7 +103,7 @@ a {
   max-width: 100%;
 }
 .auth-form input { width: 100%; }
-.auth-form .auth-divider {
+.auth-divider {
   text-align: center;
   font-family: var(--sans);
   font-size: 11px;
@@ -144,10 +133,7 @@ a {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.auth-toggle button:hover {
-  background: transparent;
-  color: var(--vermilion);
-}
+.auth-toggle button:hover { background: transparent; color: var(--vermilion); }
 
 /* ==========================================================================
    Project list
@@ -201,6 +187,7 @@ a {
   margin-bottom: 24px;
 }
 .project-row {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -210,18 +197,66 @@ a {
   cursor: pointer;
   transition: border-color 0.15s ease;
 }
-.project-row:hover {
-  border-color: var(--ink);
-}
-.project-row .project-name {
+.project-row:hover { border-color: var(--ink); }
+.project-row .project-name { font-family: var(--serif); font-size: 16px; }
+.project-name-edit {
+  flex: 1;
+  margin-right: 12px;
   font-family: var(--serif);
   font-size: 16px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  padding: 4px 8px;
+}
+.project-row-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
 }
 .project-row .project-meta {
   font-family: var(--sans);
   font-size: 11px;
   color: var(--ink-soft);
   letter-spacing: 0.05em;
+}
+.project-menu-trigger {
+  border: none;
+  background: transparent;
+  padding: 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  letter-spacing: 0.1em;
+}
+.project-menu-trigger:hover {
+  background: transparent;
+  color: var(--ink);
+}
+.project-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 10;
+  background: var(--paper-warm);
+  border: 0.5px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+  box-shadow: 2px 2px 0 rgba(28, 26, 23, 0.08);
+}
+.project-menu button {
+  border: none;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 0;
+}
+.project-menu button:hover { background: var(--ink-line); color: var(--ink); }
+.project-menu .menu-danger { color: var(--vermilion); }
+.project-menu .menu-danger:hover {
+  background: var(--vermilion-soft);
+  color: var(--vermilion);
 }
 .project-empty {
   font-family: var(--serif);
@@ -241,15 +276,8 @@ a {
 /* ==========================================================================
    Workspace
    ========================================================================== */
-.workspace {
-  position: relative;
-  height: 100%;
-  width: 100%;
-}
-.workspace-canvas {
-  position: absolute;
-  inset: 0;
-}
+.workspace { position: relative; height: 100%; width: 100%; }
+.workspace-canvas { position: absolute; inset: 0; }
 .workspace-overlay {
   position: absolute;
   top: 16px;
@@ -259,6 +287,7 @@ a {
   color: var(--ink-soft);
   letter-spacing: 0.1em;
   pointer-events: none;
+  z-index: 5;
 }
 .workspace-overlay .project-title {
   color: var(--ink-mid);
@@ -279,11 +308,10 @@ a {
   padding: 4px 8px;
   text-decoration: underline;
   text-underline-offset: 2px;
+  z-index: 5;
 }
-.workspace-back:hover {
-  background: transparent;
-  color: var(--vermilion);
-}
+.workspace-back:hover { background: transparent; color: var(--vermilion); }
+
 .workspace-status {
   position: absolute;
   bottom: 16px;
@@ -293,10 +321,115 @@ a {
   color: var(--ink-soft);
   letter-spacing: 0.05em;
   pointer-events: none;
+  z-index: 5;
 }
 
 /* ==========================================================================
-   Loading / shared
+   Question input
+   ========================================================================== */
+.question-input {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  width: 600px;
+  max-width: calc(100% - 32px);
+  z-index: 5;
+  background: rgba(244, 241, 234, 0.92);
+  backdrop-filter: blur(8px);
+  padding: 8px;
+  border: 0.5px solid var(--ink-line);
+}
+.question-input input {
+  flex: 1;
+  font-family: var(--serif);
+  font-size: 15px;
+  padding: 10px 14px;
+  background: var(--paper-warm);
+}
+.question-input input:focus { border-color: var(--ink); }
+.question-input button { padding: 10px 20px; }
+
+/* ==========================================================================
+   Similarity dialog
+   ========================================================================== */
+.dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.dialog {
+  background: var(--paper);
+  border: 0.5px solid var(--ink);
+  width: 480px;
+  max-width: calc(100% - 32px);
+  padding: 24px;
+  box-shadow: 4px 4px 0 rgba(28, 26, 23, 0.08);
+}
+.dialog-label {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--vermilion);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.dialog-similarity {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-mid);
+  margin-bottom: 16px;
+}
+.dialog-existing,
+.dialog-new {
+  background: var(--paper-warm);
+  border: 0.5px solid var(--ink-line);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.dialog-existing-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  color: var(--ink-soft);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.dialog-existing-content {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+.dialog-actions button { flex: 1; padding: 10px; }
+.dialog-actions .dialog-cancel {
+  border-color: var(--ink-line);
+  color: var(--ink-mid);
+}
+.dialog-actions .dialog-cancel:hover {
+  background: var(--ink-line);
+  color: var(--ink);
+}
+.dialog-hint {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Shared
    ========================================================================== */
 .center-fill {
   height: 100%;
