@@ -1,13 +1,9 @@
 // ==========================================================================
-// Claude 클라이언트 — Anthropic Claude Sonnet 4
-// 실제 API 호출은 /api/ask 서버리스 함수에서 (Anthropic 키 보호).
+// Claude 클라이언트
 // ==========================================================================
 
 /**
- * 질문에 대한 답변 + 반문 생성.
- * @param {string} question
- * @param {Array<{type, content}>} relatedNodes - 컨텍스트로 줄 인근 노드들
- * @returns {Promise<{answer: string, counters: string[]} | null>}
+ * 질문 → 답변 + 반문 1~3
  */
 export async function askClaude(question, relatedNodes = []) {
   const trimmed = (question || '').trim();
@@ -19,7 +15,7 @@ export async function askClaude(question, relatedNodes = []) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         question: trimmed,
-        context: relatedNodes.slice(0, 10)  // 너무 길어지지 않도록 제한
+        context: relatedNodes.slice(0, 10)
       })
     });
 
@@ -36,6 +32,35 @@ export async function askClaude(question, relatedNodes = []) {
     };
   } catch (err) {
     console.error('[ask] 네트워크 오류:', err);
+    return null;
+  }
+}
+
+/**
+ * 노드 N개 사이의 모순/대립 관계 찾기.
+ * @param {Array<{id, type, content}>} nodes - 분석 대상
+ * @returns {Promise<Array<{sourceId, targetId, reasoning}> | null>}
+ */
+export async function findContradictions(nodes) {
+  if (!nodes || nodes.length < 2) return [];
+
+  try {
+    const res = await fetch('/api/contradiction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nodes: nodes.slice(0, 20) })
+    });
+
+    if (!res.ok) {
+      const errMsg = await res.text();
+      console.error('[contradiction] API 오류:', res.status, errMsg);
+      return null;
+    }
+
+    const data = await res.json();
+    return Array.isArray(data.contradictions) ? data.contradictions : [];
+  } catch (err) {
+    console.error('[contradiction] 네트워크 오류:', err);
     return null;
   }
 }
