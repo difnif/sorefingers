@@ -48,7 +48,7 @@ export default function Canvas3D({ onPhysicsReady }) {
     <Canvas
       orthographic
       camera={{ position: [0, 0, 50], zoom: 40, near: 0.1, far: 1000 }}
-      dpr={[1, 2]}
+      dpr={[1]}
       gl={{
         antialias: true,
         alpha: false,
